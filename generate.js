@@ -10,6 +10,13 @@ const theme = {
   gray: "363636"
 };
 
+const layout = {
+  headerHeight: 1.2,
+  contentTop: 1.5,   // safe spacing below header
+  contentLeft: 1,
+  contentWidth: 8
+};
+
 let pres = new PptxGenJS();
 
 /* ---------- TEMPLATES ---------- */
@@ -19,7 +26,7 @@ function addTitleSlide() {
   slide.background = { color: theme.navy };
 
   slide.addText(data.title, {
-    x: 0.5, y: 1.8, w: 9,
+    x: 0.5, y: layout.contentTop + 0.3, w: 9,
     fontSize: 44, bold: true, color: theme.white, align: "center"
   });
 
@@ -44,7 +51,7 @@ function addScriptureSlides() {
     });
 
     slide.addText(text, {
-      x: 0.8, y: 1.1, w: 8.4,
+      x: 0.8, y: layout.contentTop, w: 8.4,
       fontSize: 18, lineSpacing: 28
     });
   });
@@ -63,15 +70,13 @@ function addOutlineSlide() {
       text: item,
       options: { bullet: true, breakLine: true }
     })),
-    { x: 1.5, y: 1.8, w: 7, fontSize: 22 }
+    { x: 1.5, y: layout.contentTop + 0.3, w: 7, fontSize: 22 }
   );
 }
 
-function addSectionTitleSlide(title, verse) {
-  const slide = pres.addSlide();
-
+function addHeader(slide, title) {
   slide.addShape(pres.shapes.RECTANGLE, {
-    x: 0, y: 0, w: 10, h: 1.2,
+    x: 0, y: 0, w: 10, h: layout.headerHeight,
     fill: { color: theme.navy }
   });
 
@@ -82,9 +87,17 @@ function addSectionTitleSlide(title, verse) {
     color: theme.white,
     align: "center"
   });
+}
+
+function addSectionTitleSlide(title, verse) {
+  const slide = pres.addSlide();
+
+  addHeader(slide, title);
 
   slide.addText(verse, {
-    x: 0.5, y: 1.6, w: 9,
+    x: 0.5,
+    y: layout.contentTop,
+    w: 9,
     fontSize: 24,
     align: "center"
   });
@@ -113,7 +126,7 @@ function addGreekWordsSlide(title, words) {
       { text: " ", options: { breakLine: true } }
     ])),
     {
-      x: 2, y: 1.8, w: 6,
+      x: 2, y: layout.contentTop + 0.3, w: 6,
       fontSize: 20
     }
   );
@@ -133,7 +146,7 @@ function addTeachingSlide(title, points) {
       options: { breakLine: true }
     })),
     {
-      x: 1.5, y: 1.8, w: 7,
+      x: 1.5, y: layout.contentTop + 0.3, w: 7,
       fontSize: 22, lineSpacing: 36
     }
   );
@@ -145,7 +158,7 @@ function addKeyTruthSlide(text, ref = null) {
   slide.background = { color: "F8F9FA" };
 
   slide.addText(text, {
-    x: 0.5, y: 1.8, w: 9,
+    x: 0.5, y: layout.contentTop + 0.3, w: 9,
     fontSize: 44,
     bold: true,
     align: "center"
@@ -174,28 +187,28 @@ function addMaterialsSlide(materials) {
 
   // LEFT
   slide.addText(L.title, {
-    x: 0.8, y: 1.5, w: 4,
+    x: 0.8, y: layout.contentTop, w: 4,
     fontSize: 22, bold: true, align: "center"
   });
 
   slide.addText(
     L.items.map(i => ({ text: i, options: { breakLine: true } })),
     {
-      x: 1.2, y: 2.2, w: 3,
+      x: 1.2, y: layout.contentTop + 0.7, w: 3,
       fontSize: 18
     }
   );
 
   // RIGHT
   slide.addText(R.title, {
-    x: 5.2, y: 1.5, w: 4,
+    x: 5.2, y: layout.contentTop, w: 4,
     fontSize: 22, bold: true, align: "center"
   });
 
   slide.addText(
     R.items.map(i => ({ text: i, options: { breakLine: true } })),
     {
-      x: 5.6, y: 2.2, w: 3,
+      x: 5.6, y: layout.contentTop + 0.7, w: 3,
       fontSize: 18
     }
   );
@@ -219,7 +232,7 @@ function addEmphasisScriptureSlide(title, lines) {
       }
     })),
     {
-      x: 1, y: 2, w: 8,
+      x: 1, y: layout.contentTop + 0.5, w: 8,
       fontSize: 20, lineSpacing: 34, align: "center"
     }
   );
