@@ -46,12 +46,12 @@ function addScriptureSlides() {
     const slide = pres.addSlide();
 
     slide.addText(data.subtitle, {
-      x: 0.5, y: 0.4, w: 9,
+      x: 0.5, y: layout.headerHeight, w: 9,
       fontSize: 28, bold: true, align: "center"
     });
 
     slide.addText(text, {
-      x: 0.8, y: layout.contentTop, w: 8.4,
+      x: 0.8, y: layout.contentLeft + layout.contentTop, w: 8.4,
       fontSize: 18, lineSpacing: 28
     });
   });
@@ -61,7 +61,7 @@ function addOutlineSlide() {
   const slide = pres.addSlide();
 
   slide.addText("信息大綱", {
-    x: 0.5, y: 0.5, w: 9,
+    x: 0.5, y: layout.headerHeight, w: 9,
     fontSize: 36, bold: true, align: "center"
   });
 
@@ -70,7 +70,7 @@ function addOutlineSlide() {
       text: item,
       options: { bullet: true, breakLine: true }
     })),
-    { x: 1.5, y: layout.contentTop + 0.3, w: 7, fontSize: 22 }
+    { x: 1.5, y: layout.contentLeft + layout.contentTop, w: 7, fontSize: 22 }
   );
 }
 
@@ -81,7 +81,7 @@ function addHeader(slide, title) {
   });
 
   slide.addText(title, {
-    x: 0.5, y: 0.3, w: 9,
+    x: 0.5, y: 0.8, w: 9,
     fontSize: 32,
     bold: true,
     color: theme.white,
@@ -107,7 +107,7 @@ function addGreekWordsSlide(title, words) {
   const slide = pres.addSlide();
 
   slide.addText(title, {
-    x: 0.5, y: 0.5, w: 9,
+    x: 0.5, y: layout.headerHeight, w: 9,
     fontSize: 32, bold: true, align: "center"
   });
 
@@ -126,7 +126,7 @@ function addGreekWordsSlide(title, words) {
       { text: " ", options: { breakLine: true } }
     ])),
     {
-      x: 2, y: layout.contentTop + 0.3, w: 6,
+      x: 2, y: layout.headerHeight + layout.contentTop + 0.3, w: 6,
       fontSize: 20
     }
   );
@@ -136,7 +136,7 @@ function addTeachingSlide(title, points) {
   const slide = pres.addSlide();
 
   slide.addText(title, {
-    x: 0.5, y: 0.5, w: 9,
+    x: 0.5, y: layout.headerHeight, w: 9,
     fontSize: 32, bold: true, align: "center"
   });
 
@@ -146,7 +146,7 @@ function addTeachingSlide(title, points) {
       options: { breakLine: true }
     })),
     {
-      x: 1.5, y: layout.contentTop + 0.3, w: 7,
+      x: 1.5, y: layout.headerHeight + layout.contentTop + 0.3, w: 7,
       fontSize: 22, lineSpacing: 36
     }
   );
@@ -218,7 +218,7 @@ function addEmphasisScriptureSlide(title, lines) {
   const slide = pres.addSlide();
 
   slide.addText(title, {
-    x: 0.5, y: 0.5, w: 9,
+    x: 0.5, y: layout.headerHeight, w: 9,
     fontSize: 32, bold: true, align: "center"
   });
 
@@ -232,7 +232,7 @@ function addEmphasisScriptureSlide(title, lines) {
       }
     })),
     {
-      x: 1, y: layout.contentTop + 0.5, w: 8,
+      x: 1, y: layout.headerHeight + layout.contentTop + 0.5, w: 8,
       fontSize: 20, lineSpacing: 34, align: "center"
     }
   );
