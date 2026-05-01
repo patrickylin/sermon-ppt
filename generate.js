@@ -1,7 +1,10 @@
 const PptxGenJS = require("pptxgenjs");
 const fs = require("fs");
 
-const data = JSON.parse(fs.readFileSync("sermon-data.json", "utf-8"));
+// Accept JSON filename as command-line argument
+// Usage: node generate.js sermon-data-1cor3.json
+const inputFile = process.argv[2] || "sermon-data.json";
+const data = JSON.parse(fs.readFileSync(inputFile, "utf-8"));
 
 const theme = {
   navy: "1E2761",
@@ -132,6 +135,7 @@ function addGreekWordsSlide(title, words) {
   );
 }
 
+// title and points now come from JSON via teaching: { title, points }
 function addTeachingSlide(title, points) {
   const slide = pres.addSlide();
 
@@ -174,10 +178,11 @@ function addKeyTruthSlide(text, ref = null) {
   }
 }
 
+// title now comes from JSON via materials: { title, left, right }
 function addMaterialsSlide(materials) {
   const slide = pres.addSlide();
 
-  slide.addText("兩種材料", {
+  slide.addText(materials.title, {
     x: 0.5, y: 0.5, w: 9,
     fontSize: 32, bold: true, align: "center"
   });
@@ -214,6 +219,7 @@ function addMaterialsSlide(materials) {
   );
 }
 
+// title and lines now come from JSON via emphasis: { title, lines }
 function addEmphasisScriptureSlide(title, lines) {
   const slide = pres.addSlide();
 
@@ -292,16 +298,16 @@ data.points.forEach(p => {
     addKeyTruthSlide(p.keyTruth, p.ref);
   }
 
-  if (p.grammar) {
-    addTeachingSlide("文法重點", p.grammar);
+  if (p.teaching) {
+    addTeachingSlide(p.teaching.title, p.teaching.points);
   }
 
   if (p.materials) {
     addMaterialsSlide(p.materials);
   }
 
-  if (p.testing) {
-    addEmphasisScriptureSlide("那日子的試驗", p.testing);
+  if (p.emphasis) {
+    addEmphasisScriptureSlide(p.emphasis.title, p.emphasis.lines);
   }
 });
 
@@ -312,4 +318,4 @@ addHymnSlide();
 
 pres.writeFile({ fileName: `sermon-${data.date}.pptx` });
 
-console.log("✅ Presentation generated!");
+console.log(`✅ Presentation generated from ${inputFile}!`);
