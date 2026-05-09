@@ -2,7 +2,7 @@ const PptxGenJS = require("pptxgenjs");
 const fs = require("fs");
 
 // Accept JSON filename as command-line argument
-// Usage: node generate.js sermon-data-1cor3.json
+// Usage: node generate.js sermon-data-matt12_1-14.json
 const inputFile = process.argv[2] || "sermon-data.json";
 const data = JSON.parse(fs.readFileSync(inputFile, "utf-8"));
 
@@ -15,7 +15,7 @@ const theme = {
 
 const layout = {
   headerHeight: 1.2,
-  contentTop: 1.5,   // safe spacing below header
+  contentTop: 1.5,
   contentLeft: 1,
   contentWidth: 8
 };
@@ -60,6 +60,29 @@ function addScriptureSlides() {
   });
 }
 
+// NEW: renders data.intro before the outline slide
+function addIntroSlide() {
+  if (!data.intro) return;
+  const intro = data.intro;
+  const slide = pres.addSlide();
+
+  addHeader(slide, intro.title);
+
+  slide.addText(
+    intro.tensions.map(t => ({ text: t, options: { bullet: true, breakLine: true } })),
+    {
+      x: 1, y: layout.contentTop + 0.5, w: 8,
+      fontSize: 20, lineSpacing: 34
+    }
+  );
+
+  slide.addText(`${intro.pivot}\n\n${intro.question}`, {
+    x: 1, y: 3.6, w: 8,
+    fontSize: 18, italic: true, align: "center", color: theme.gray
+  });
+}
+
+// CHANGED: now reads data.outline.items instead of data.outline
 function addOutlineSlide() {
   const slide = pres.addSlide();
 
@@ -69,7 +92,7 @@ function addOutlineSlide() {
   });
 
   slide.addText(
-    data.outline.map(item => ({
+    data.outline.items.map(item => ({
       text: item,
       options: { bullet: true, breakLine: true }
     })),
@@ -85,10 +108,7 @@ function addHeader(slide, title) {
 
   slide.addText(title, {
     x: 0.5, y: 0.8, w: 9,
-    fontSize: 32,
-    bold: true,
-    color: theme.white,
-    align: "center"
+    fontSize: 32, bold: true, color: theme.white, align: "center"
   });
 }
 
@@ -98,12 +118,35 @@ function addSectionTitleSlide(title, verse) {
   addHeader(slide, title);
 
   slide.addText(verse, {
-    x: 0.5,
-    y: layout.contentTop,
-    w: 9,
-    fontSize: 24,
-    align: "center"
+    x: 0.5, y: layout.contentTop, w: 9,
+    fontSize: 24, align: "center"
   });
+}
+
+// NEW: renders p.subPoints as a single slide
+// title comes from p.subPointsTitle in JSON
+function addSubPointsSlide(title, subPoints) {
+  const slide = pres.addSlide();
+
+  addHeader(slide, title);
+
+  slide.addText(
+    subPoints.flatMap(sp => ([
+      {
+        text: `${sp.label}（${sp.ref}）`,
+        options: { bold: true, breakLine: true }
+      },
+      {
+        text: sp.truth,
+        options: { fontSize: 18, color: theme.gray, breakLine: true }
+      },
+      { text: " ", options: { breakLine: true } }
+    ])),
+    {
+      x: 1.5, y: layout.headerHeight + layout.contentTop + 0.5, w: 7,
+      fontSize: 20, lineSpacing: 30
+    }
+  );
 }
 
 function addGreekWordsSlide(title, words) {
@@ -135,7 +178,6 @@ function addGreekWordsSlide(title, words) {
   );
 }
 
-// title and points now come from JSON via teaching: { title, points }
 function addTeachingSlide(title, points) {
   const slide = pres.addSlide();
 
@@ -163,22 +205,17 @@ function addKeyTruthSlide(text, ref = null) {
 
   slide.addText(text, {
     x: 0.5, y: layout.contentTop + 0.3, w: 9,
-    fontSize: 44,
-    bold: true,
-    align: "center"
+    fontSize: 44, bold: true, align: "center"
   });
 
   if (ref) {
     slide.addText(`— ${ref}`, {
       x: 0.5, y: 4, w: 9,
-      fontSize: 18,
-      align: "center",
-      italic: true
+      fontSize: 18, align: "center", italic: true
     });
   }
 }
 
-// title now comes from JSON via materials: { title, left, right }
 function addMaterialsSlide(materials) {
   const slide = pres.addSlide();
 
@@ -190,7 +227,6 @@ function addMaterialsSlide(materials) {
   const L = materials.left;
   const R = materials.right;
 
-  // LEFT
   slide.addText(L.title, {
     x: 0.8, y: layout.contentTop, w: 4,
     fontSize: 22, bold: true, align: "center"
@@ -199,12 +235,11 @@ function addMaterialsSlide(materials) {
   slide.addText(
     L.items.map(i => ({ text: i, options: { breakLine: true } })),
     {
-      x: 1.2, y: layout.contentTop + 0.7, w: 3,
+      x: 1.2, y: layout.contentTop + 1.2, w: 3,
       fontSize: 18
     }
   );
 
-  // RIGHT
   slide.addText(R.title, {
     x: 5.2, y: layout.contentTop, w: 4,
     fontSize: 22, bold: true, align: "center"
@@ -213,13 +248,12 @@ function addMaterialsSlide(materials) {
   slide.addText(
     R.items.map(i => ({ text: i, options: { breakLine: true } })),
     {
-      x: 5.6, y: layout.contentTop + 0.7, w: 3,
+      x: 5.6, y: layout.contentTop + 1.2, w: 3,
       fontSize: 18
     }
   );
 }
 
-// title and lines now come from JSON via emphasis: { title, lines }
 function addEmphasisScriptureSlide(title, lines) {
   const slide = pres.addSlide();
 
@@ -244,22 +278,55 @@ function addEmphasisScriptureSlide(title, lines) {
   );
 }
 
+// CHANGED: handles new conclusion object with twoWorlds + invitation + closing
+// produces two slides instead of one
 function addConclusionSlide() {
-  const slide = pres.addSlide();
-  slide.background = { color: theme.navy };
+  const conc = data.conclusion;
 
-  slide.addText(data.title, {
-    x: 0.5, y: 1.2, w: 9,
-    fontSize: 40, bold: true, color: theme.white, align: "center"
+  // Slide 1: Two-worlds comparison
+  const slide1 = pres.addSlide();
+  slide1.background = { color: theme.navy };
+
+  const L = conc.twoWorlds.left;
+  const R = conc.twoWorlds.right;
+
+  slide1.addText(L.label, {
+    x: 0.5, y: 0.6, w: 4.2,
+    fontSize: 22, bold: true, color: theme.white, align: "center"
+  });
+  slide1.addText(
+    L.items.map(i => ({ text: i, options: { bullet: true, breakLine: true } })),
+    {
+      x: 0.5, y: 1.4, w: 4.2,
+      fontSize: 18, color: theme.lightBlue, lineSpacing: 30
+    }
+  );
+
+  slide1.addText(R.label, {
+    x: 5.2, y: 0.6, w: 4.2,
+    fontSize: 22, bold: true, color: theme.white, align: "center"
+  });
+  slide1.addText(
+    R.items.map(i => ({ text: i, options: { bullet: true, breakLine: true } })),
+    {
+      x: 5.2, y: 1.4, w: 4.2,
+      fontSize: 18, color: theme.lightBlue, lineSpacing: 30
+    }
+  );
+
+  // Slide 2: Invitation + Closing
+  const slide2 = pres.addSlide();
+  slide2.background = { color: theme.navy };
+
+  slide2.addText(conc.invitation, {
+    x: 1, y: 1.5, w: 8,
+    fontSize: 24, color: theme.lightBlue, align: "center", italic: true
   });
 
-  slide.addText(
-    data.conclusion.map(i => ({
-      text: i,
-      options: { bullet: true, breakLine: true }
-    })),
-    { x: 2, y: 2.8, w: 6, fontSize: 20, color: theme.lightBlue }
-  );
+  slide2.addText(conc.closing, {
+    x: 1, y: 3, w: 8,
+    fontSize: 32, bold: true, color: theme.white, align: "center"
+  });
 }
 
 function addHymnSlide() {
@@ -285,10 +352,15 @@ function addHymnSlide() {
 
 addTitleSlide();
 addScriptureSlides();
-addOutlineSlide();
+addIntroSlide();      // NEW: intro before outline
+addOutlineSlide();    // now reads data.outline.items
 
 data.points.forEach(p => {
   addSectionTitleSlide(p.title, p.verse);
+
+  if (p.subPoints) {                                      // NEW
+    addSubPointsSlide(p.subPointsTitle || "要點", p.subPoints);
+  }
 
   if (p.greekWords) {
     addGreekWordsSlide("關鍵字詞", p.greekWords);
