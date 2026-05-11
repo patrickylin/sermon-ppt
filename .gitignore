@@ -2,3 +2,5 @@
 .git
 node_modules/
 *.pptx
+.Rapp.history
+.Rhistory

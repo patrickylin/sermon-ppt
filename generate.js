@@ -68,14 +68,14 @@ function addIntroSlide() {
   const intro = data.intro;
   const slide = pres.addSlide();
 
-  addHeader(slide, intro.title ?? "引言");
+  addHeader(slide, intro.title ?? "");
 
   // LAYER 1: guard against missing tensions array
   if (intro.tensions?.length) {
     slide.addText(
       intro.tensions.map(t => ({ text: t, options: { bullet: true, breakLine: true } })),
       {
-        x: 1, y: layout.contentTop + 0.5, w: 8,   // user adjustment: 0.5
+        x: 1, y: 2.75, w: 8,   // user adjustment: 0.5
         fontSize: 20, lineSpacing: 34
       }
     );
@@ -85,7 +85,7 @@ function addIntroSlide() {
   const footerParts = [intro.pivot, intro.question].filter(Boolean);
   if (footerParts.length) {
     slide.addText(footerParts.join("\n\n"), {
-      x: 1, y: 3.6, w: 8,
+      x: 1, y: 4.8, w: 8,
       fontSize: 18, italic: true, align: "center", color: theme.gray
     });
   }
