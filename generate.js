@@ -461,4 +461,4 @@ addHymnSlide();
 
 pres.writeFile({ fileName: `sermon-${data.date ?? "output"}.pptx` });
 
-console.log(`✅ Presentation file: sermon-${data.date ?? "output"}.pptx has been generated!`);
+console.log(`✅ sermon-${data.date ?? "output"}.pptx`);
