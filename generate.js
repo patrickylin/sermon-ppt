@@ -14,7 +14,10 @@ const theme = {
 };
 
 const layout = {
-  headerHeight: 1.2,
+  headerHeight: 1.2, // height of the blue rectangle shape
+  headerText: 0.625, // text position in the rectangle shape
+  contentTitle: 1,   // content page — title position
+  contentBullet: 3.125,  // content page — content position
   contentTop: 1.5,
   contentLeft: 1,
   contentWidth: 8
@@ -52,12 +55,12 @@ function addScriptureSlides() {
     const slide = pres.addSlide();
 
     slide.addText(data.subtitle ?? "", {
-      x: 0.5, y: layout.headerHeight, w: 9,
+      x: 0.5, y: layout.contentTitle, w: 9,
       fontSize: 28, bold: true, align: "center"
     });
 
     slide.addText(text, {
-      x: 0.8, y: layout.contentLeft + layout.contentTop, w: 8.4,
+      x: 0.8, y: layout.contentBullet, w: 8.4,
       fontSize: 18, lineSpacing: 28
     });
   });
@@ -75,7 +78,7 @@ function addIntroSlide() {
     slide.addText(
       intro.tensions.map(t => ({ text: t, options: { bullet: true, breakLine: true } })),
       {
-        x: 1, y: layout.contentTop + 0.5, w: 8,   // user adjustment: 0.5
+        x: 1, y: layout.headerHeight + layout.contentTop, w: 8,
         fontSize: 20, lineSpacing: 34
       }
     );
@@ -85,7 +88,7 @@ function addIntroSlide() {
   const footerParts = [intro.pivot, intro.question].filter(Boolean);
   if (footerParts.length) {
     slide.addText(footerParts.join("\n\n"), {
-      x: 1, y: 3.6, w: 8,
+      x: 1, y: layout.headerHeight + layout.contentTop + 2, w: 8,
       fontSize: 18, italic: true, align: "center", color: theme.gray
     });
   }
@@ -102,7 +105,7 @@ function addOutlineSlide() {
   const slide = pres.addSlide();
 
   slide.addText(data.labels?.outline ?? "Outline", {
-    x: 0.5, y: layout.headerHeight, w: 9,
+    x: 0.5, y: layout.contentTitle, w: 9,
     fontSize: 36, bold: true, align: "center"
   });
 
@@ -111,7 +114,7 @@ function addOutlineSlide() {
       text: item,
       options: { bullet: true, breakLine: true }
     })),
-    { x: 1.5, y: layout.contentLeft + layout.contentTop, w: 7, fontSize: 22 }
+    { x: 1.5, y: layout.contentBullet, w: 7, fontSize: 22 }
   );
 }
 
@@ -122,7 +125,7 @@ function addHeader(slide, title) {
   });
 
   slide.addText(title, {
-    x: 0.5, y: 0.8, w: 9,
+    x: 0.5, y: layout.headerText, w: 9,
     fontSize: 32, bold: true, color: theme.white, align: "center"
   });
 }
@@ -174,7 +177,7 @@ function addSubPointsSlide(title, subPoints) {
       { text: " ", options: { breakLine: true } }
     ])),
     {
-      x: 1.5, y: layout.headerHeight + layout.contentTop + 0.5, w: 7,   // user adjustment: headerHeight + 0.5
+      x: 1.5, y: layout.headerHeight + layout.contentTop + 1, w: 7,
       fontSize: 20, lineSpacing: 30
     }
   );
@@ -187,7 +190,7 @@ function addGreekWordsSlide(title, words) {
   const slide = pres.addSlide();
 
   slide.addText(title, {
-    x: 0.5, y: layout.headerHeight, w: 9,
+    x: 0.5, y: layout.contentTitle, w: 9,
     fontSize: 32, bold: true, align: "center"
   });
 
@@ -204,7 +207,7 @@ function addGreekWordsSlide(title, words) {
       { text: " ", options: { breakLine: true } }
     ])),
     {
-      x: 2, y: layout.headerHeight + layout.contentTop + 0.3, w: 6,
+      x: 2, y: layout.contentBullet, w: 6,
       fontSize: 20
     }
   );
@@ -217,7 +220,7 @@ function addTeachingSlide(title, points) {
   const slide = pres.addSlide();
 
   slide.addText(title ?? "", {
-    x: 0.5, y: layout.headerHeight, w: 9,
+    x: 0.5, y: layout.contentTitle, w: 9,
     fontSize: 32, bold: true, align: "center"
   });
 
@@ -227,7 +230,7 @@ function addTeachingSlide(title, points) {
       options: { breakLine: true }
     })),
     {
-      x: 1.5, y: layout.headerHeight + layout.contentTop + 0.3, w: 7,
+      x: 1.5, y: layout.contentBullet, w: 7,
       fontSize: 22, lineSpacing: 36
     }
   );
@@ -243,7 +246,7 @@ function addKeyTruthSlide(text, ref = null) {
 
   slide.addText(text, {
     x: 0.5, y: layout.contentTop + 0.3, w: 9,
-    fontSize: 44, bold: true, align: "center"
+    fontSize: 40, bold: true, align: "center"
   });
 
   if (ref) {
