@@ -329,68 +329,67 @@ function addConclusionSlide() {
   const conc = data.conclusion;
   if (!conc) return;
 
-  // LAYER 1: backward compat — accepts both old array format and new object format
-  if (Array.isArray(conc)) {
-    const slide = pres.addSlide();
-    slide.background = { color: theme.navy };
+  if (conc.items?.length) {
+   const slide = pres.addSlide();
+   addHeader(slide, conc.title ?? "");
 
-    slide.addText(data.title ?? "", {
-      x: 0.5, y: 1.2, w: 9,
-      fontSize: 40, bold: true, color: theme.white, align: "center"
+  if (conc.label) {
+    slide.addText(conc.label, {
+      x: 0.5, y: 1.5, w: 9,
+      fontSize: 24, bold: true, align: "center"
     });
+  }
 
-    slide.addText(
-      conc.map(i => ({ text: i, options: { bullet: true, breakLine: true } })),
-      { x: 2, y: 2.8, w: 6, fontSize: 20, color: theme.lightBlue }
+  slide.addText(
+    conc.items.map(i => ({ text: i, options: { bullet: true, breakLine: true } })),
+    { x: 1.5, y: conc.label ? 2.5 : 2.0, w: 7, fontSize: 20, lineSpacing: 34 }
     );
     return;
   }
 
-  // New object format: two-worlds comparison + invitation/closing
-
   // Slide 1: Two-worlds comparison
   if (conc.twoWorlds?.left && conc.twoWorlds?.right) {
     const slide1 = pres.addSlide();
-    slide1.background = { color: theme.navy };
-
+    addHeader(slide1, conc.title ?? "");
+    
     const L = conc.twoWorlds.left;
     const R = conc.twoWorlds.right;
 
     slide1.addText(L.label ?? "", {
-      x: 0.5, y: 0.6, w: 4.2,
-      fontSize: 22, bold: true, color: theme.white, align: "center"
+      x: 0.5, y: 1.5, w: 4.2,
+      fontSize: 22, bold: true, color: "000000", align: "center"
     });
     slide1.addText(
       (L.items ?? []).map(i => ({ text: i, options: { bullet: true, breakLine: true } })),
-      { x: 0.5, y: 1.4, w: 4.2, fontSize: 18, color: theme.lightBlue, lineSpacing: 30 }
+      { x: 0.5, y: 2.3, w: 4.2, fontSize: 18, color: theme.gray, lineSpacing: 30 }
     );
 
     slide1.addText(R.label ?? "", {
-      x: 5.2, y: 0.6, w: 4.2,
-      fontSize: 22, bold: true, color: theme.white, align: "center"
+      x: 5.2, y: 1.5, w: 4.2,
+      fontSize: 22, bold: true, color: "000000", align: "center"
     });
     slide1.addText(
       (R.items ?? []).map(i => ({ text: i, options: { bullet: true, breakLine: true } })),
-      { x: 5.2, y: 1.4, w: 4.2, fontSize: 18, color: theme.lightBlue, lineSpacing: 30 }
+      { x: 5.2, y: 2.3, w: 4.2, fontSize: 18, color: theme.gray, lineSpacing: 30 }
     );
   }
 
   // Slide 2: Invitation + Closing
   if (conc.invitation || conc.closing) {
     const slide2 = pres.addSlide();
-    slide2.background = { color: theme.navy };
+    addHeader(slide2, conc.title ?? "");
 
     if (conc.invitation) {
       slide2.addText(conc.invitation, {
-        x: 1, y: 1.5, w: 8,
-        fontSize: 24, color: theme.lightBlue, align: "center", italic: true
+        x: 1, y: 2.0, w: 8,
+        fontSize: 24, color: theme.gray, align: "center", italic: true
       });
     }
 
     if (conc.closing) {
       slide2.addText(conc.closing, {
-        x: 1, y: 3, w: 8,
-        fontSize: 32, bold: true, color: theme.white, align: "center"
+        x: 1, y: 3.2, w: 8,
+        fontSize: 32, bold: true, color: "000000", align: "center"
       });
     }
   }
@@ -462,4 +461,4 @@ addHymnSlide();
 
 pres.writeFile({ fileName: `sermon-${data.date ?? "output"}.pptx` });
 
-console.log(`✅ Presentation generated from ${inputFile}!`);
+console.log(`✅ Presentation file: sermon-${data.date ?? "output"}.pptx has been generated!`);

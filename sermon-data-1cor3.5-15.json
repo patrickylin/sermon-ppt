@@ -124,11 +124,15 @@
       }
     }
   ],
-  "conclusion": [
-    "唯有祂叫教會生長",
-    "祂已經立好基督的根基",
-    "祂在那日子要試驗各人的工程"
-  ],
+  "conclusion": {
+    "title": "結論",
+    "label": "",
+    "items": [
+      "唯有祂叫教會生長",
+      "祂已經立好基督的根基",
+      "祂在那日子要試驗各人的工程"
+    ]
+  },
   "hymn": {
     "title": "根基穩固歌",
     "subtitle": "The Church's One Foundation"
